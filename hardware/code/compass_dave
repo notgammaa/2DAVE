@@ -1,0 +1,93 @@
+#include <Wire.h>
+
+
+#define _i2cAddress 0x60
+#define Yaw_Register_255 1
+#define Yaw_Register 2
+#define Yaw_Register2 3
+#define TWO_BYTES 2
+
+
+byte _yaw;
+int nReceived;
+
+
+byte _byteHigh;
+byte _byteLow;
+
+
+
+void setup()
+{
+  Serial.begin(9600);
+  Wire.begin();
+  Wire.setClock(400000); // I2C clock rate ,You can delete it but it helps the speed of I2C (default rate is 100000 Hz)
+  delay(100);
+}
+
+
+void loop()
+{
+    // read the compass
+  
+  uint16_t yaw = getYaw();
+  yaw = 360.0/255 * yaw;
+  Serial.print("$CMP,");
+  Serial.print(yaw);
+  Serial.print("\n");
+\
+}
+
+
+uint16_t getYaw(){
+  // Begin communication with CMPS12
+  Wire.beginTransmission(_i2cAddress);
+
+
+  // Tell register you want some data FOR 0-3600
+  //Wire.write(Yaw_Register);
+
+
+  // Tell register you want some data for 0-255
+  Wire.write(Yaw_Register_255);
+
+
+
+  // End the transmission
+  Wire.endTransmission();
+
+
+  // Return if we have a connection problem 
+  //if(nackCatcher != 0){return 0;}
+  
+  // Request 2 bytes from CMPS12
+  //nReceived = Wire.requestFrom(_i2cAddress , TWO_BYTES);
+
+
+  //Request 1 byte from CMPS12
+  nReceived = Wire.requestFrom(_i2cAddress , 1);
+  
+
+
+  // Something has gone wrong
+  //if (nReceived != 1) return 0;
+
+
+
+
+  // Read the values
+  //_byteHigh = Wire.read();
+  //_byteLow = Wire.read();
+  //Serial.print(_yaw);
+  //Serial.print("\n");
+
+
+  // Calculate full bearing
+  //_yaw = ((_byteHigh<<8) + _byteLow)/10;
+
+
+
+  _yaw = Wire.read(); 
+  
+  return _yaw;
+}
