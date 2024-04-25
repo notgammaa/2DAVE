@@ -1,0 +1,116 @@
+#include <Arduino.h>
+
+#include "Talkie.h"
+#include "Vocab_US_Large.h"
+
+#include "Wire.h"
+#include <MPU6050_light.h>
+
+MPU6050 mpu(Wire);
+unsigned long timer = 0;
+
+Talkie voice;
+
+const int trigPin = 9;
+const int echoPin = 10;
+
+float duration, distance;
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+
+  byte status = mpu.begin();
+  Serial.print(F("MPU6050 status: "));
+  Serial.println(status);
+  while(status!=0){ } // stop everything if could not connect to MPU6050
+  
+  Serial.println(F("Calculating offsets, do not move MPU6050"));
+  delay(1000);
+  // mpu.upsideDownMounting = true; // uncomment this line if the MPU6050 is mounted upside-down
+  mpu.calcOffsets(); // gyro and accelero
+  Serial.println("Done!\n");
+
+  Talkie voice;
+  voice.say(sp2_DEVICE);
+  voice.say(sp2_ON);
+
+  pinMode(echoPin, INPUT);
+  pinMode(trigPin, OUTPUT);
+}
+
+void loop() {
+  mpu.update();
+  
+  Serial.print("X : ");
+  Serial.println(mpu.getAngleX());
+  Serial.print("Z : ");
+  Serial.println(mpu.getAngleZ());
+  timer = millis();  
+  delay(1000);
+
+  char xdirection[1];
+  char zdirection[1];
+
+  if(mpu.getAngleX() < -15.00){
+    char xdirection[] = "lower";
+  } else if(mpu.getAngleX() >= -15.00 & mpu.getAngleX() <= 15.00){
+    char xdirection[] = "middle";
+  } else if(mpu.getAngleX() > 15.00){
+    char xdirection[] = "upper";
+  }
+
+  if(mpu.getAngleZ() < -20.00){
+    char zdirection[] = "right";
+  } else if(mpu.getAngleZ() >= -20.00 & mpu.getAngleZ() <= 20.00){
+    char zdirection[] = "middle";
+  } else if(mpu.getAngleZ() > 15.00){
+    char zdirection[] = "left";
+  }
+
+  Serial.print("You're looking to the ");
+  for (int i = 0; i < (sizeof(xdirection) - 1); i++) {
+    Serial.print(xdirection[i]);
+    delay(500);
+  }
+  Serial.print(" ");
+  for (int i = 0; i < (sizeof(zdirection) - 1); i++) {
+    Serial.print(zdirection[i]);
+    delay(500);
+  }
+  Serial.println();
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration*.0343)/2;
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  delay(100);
+
+  if (distance < 15) {
+    digitalWrite(4, LOW);
+    digitalWrite(8, LOW);
+    digitalWrite(12, HIGH);
+    Serial.println("red");
+    Talkie voice;
+    voice.say(sp2_DANGER);
+    voice.say(sp3_IN);
+    voice.say(sp4_FRONT);
+    delay(100);
+  } else if (30 <= distance & distance < 50) {
+    digitalWrite(4, LOW);
+    digitalWrite(8, HIGH);
+    digitalWrite(12, LOW);
+    Serial.println("yellow");
+  } else if (distance >= 50) {
+    digitalWrite(4, HIGH);
+    digitalWrite(8, LOW);
+    digitalWrite(12, LOW);
+    Serial.println("green");    
+  }
+}
