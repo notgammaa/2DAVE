@@ -1,0 +1,91 @@
+#include <Arduino.h>
+#include <U8g2lib.h>
+#include <SoftwareSerial.h>
+
+#ifdef U8X8_HAVE_HW_SPI
+#include <SPI.h>
+#endif
+#ifdef U8X8_HAVE_HW_I2C
+#include <Wire.h>
+#endif
+
+U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0);
+
+const int greenLED = 4;
+const int yellowLED = 8;
+const int redLED = 12;
+const int button = 2;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  u8g2.begin();
+  pinMode(greenLED, INPUT);
+  pinMode(yellowLED, INPUT);
+  pinMode(redLED, INPUT);
+  pinMode(button, OUTPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  if(digitalRead(button) == 1){
+    digitalWrite(greenLED, HIGH);
+  delay(200);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(yellowLED, HIGH);
+  delay(200);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(redLED, HIGH);
+  delay(200);
+  digitalWrite(redLED, LOW);
+  digitalWrite(yellowLED, HIGH);
+  delay(200);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(greenLED, HIGH);
+  delay(200);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(yellowLED, HIGH);
+  delay(200);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(redLED, HIGH);
+  delay(200);
+  digitalWrite(redLED, LOW);
+  digitalWrite(yellowLED, HIGH);
+  delay(200);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(greenLED, HIGH);
+  delay(200);
+  digitalWrite(greenLED, LOW);
+  delay(200);
+  digitalWrite(greenLED, HIGH);
+  digitalWrite(yellowLED, HIGH);
+  digitalWrite(redLED, HIGH);
+  delay(200);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(redLED, LOW);
+  delay(200);
+  digitalWrite(greenLED, HIGH);
+  digitalWrite(yellowLED, HIGH);
+  digitalWrite(redLED, HIGH);
+  delay(200);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(redLED, LOW);
+  delay(200);
+  digitalWrite(greenLED, HIGH);
+  digitalWrite(yellowLED, HIGH);
+  digitalWrite(redLED, HIGH);
+  delay(200);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(redLED, LOW);
+  delay(200);
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_crox4hb_tr);
+  u8g2.drawStr(0,16,"DAVE ON!");
+  u8g2.sendBuffer();
+  delay(2000);
+  u8g2.clearBuffer();
+  }
+}
