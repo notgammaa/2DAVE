@@ -1,0 +1,57 @@
+#include <Arduino.h>
+
+#include "Talkie.h"
+#include "Vocab_US_Large.h"
+
+Talkie voice;
+
+const int trigPin = 9;
+const int echoPin = 10;
+
+float duration, distance;
+
+void setup() {
+    Talkie voice;
+    voice.say(sp2_DEVICE);
+    voice.say(sp2_ON);
+
+  pinMode(echoPin, INPUT);
+  pinMode(trigPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration*.0343)/2;
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  delay(100);
+
+  if (distance < 15) {
+    digitalWrite(4, LOW);
+    digitalWrite(8, LOW);
+    digitalWrite(12, HIGH);
+    Serial.println("red");
+    Talkie voice;
+    voice.say(sp2_DANGER);
+    voice.say(sp3_IN);
+    voice.say(sp4_FRONT);
+    delay(100);
+  } else if (30 <= distance & distance < 50) {
+    digitalWrite(4, LOW);
+    digitalWrite(8, HIGH);
+    digitalWrite(12, LOW);
+    Serial.println("yellow");
+  } else if (distance >= 50) {
+    digitalWrite(4, HIGH);
+    digitalWrite(8, LOW);
+    digitalWrite(12, LOW);
+    Serial.println("green");    
+}
+}
