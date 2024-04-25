@@ -1,0 +1,21 @@
+#include <Arduino.h>
+
+#include "Talkie.h"
+#include "Vocab_US_Large.h"
+
+const int button = 10;
+
+void setup() {
+  // put your setup code here, to run once:
+  //Speaker setup using digital outputs(positve terminal to D3, negative terminal to D12)
+  pinMode(button, INPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  if(digitalRead(button) == 1){
+    Talkie voice;
+    voice.say(sp2_DEVICE);
+    voice.say(sp2_ON);
+  }
+}
