@@ -1,0 +1,19 @@
+#include <SPI.h>
+#include <Wire.h>
+
+float vout;
+int vin;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(vin, INPUT);
+}
+
+void loop() {
+  vout=vin*5/1023;
+  Serial.print("Analog in: ");
+  Serial.print(vin);
+  Serial.print("    Voltage: ");
+  Serial.println(vout);
+  delay(500);
+  }
